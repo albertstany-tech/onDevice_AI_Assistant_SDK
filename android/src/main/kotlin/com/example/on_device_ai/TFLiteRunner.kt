@@ -47,7 +47,7 @@ class TFLiteRunner(private val context: Context) {
         
         // Results is a List<Category>
         var bestCategory = "Unknown"
-        var bestScore = 0.0f
+        var bestScore = -1.0f
         
         for (category in results) {
             if (category.score > bestScore) {
@@ -56,8 +56,10 @@ class TFLiteRunner(private val context: Context) {
             }
         }
         
+        val rawDetails = results.joinToString(", ") { "${it.label}=${it.score}" }
+        
         return mapOf(
-            "output" to bestCategory,
+            "output" to "$bestCategory [$rawDetails]",
             "confidenceScore" to bestScore.toDouble(),
             "inferenceTimeMs" to inferenceTimeMs
         )

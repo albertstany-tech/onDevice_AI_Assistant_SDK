@@ -48,7 +48,7 @@ class CoreMLRunner {
         let confidence = abs(sentimentValue)
 
         return [
-            "output": outputString,
+            "output": "\(outputString) [Raw Score: \(sentimentValue)]",
             "confidenceScore": confidence,
             "inferenceTimeMs": inferenceTimeMs
         ]
