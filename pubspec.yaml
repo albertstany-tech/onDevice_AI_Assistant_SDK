@@ -1,8 +1,7 @@
 name: on_device_ai
-description: "A new Flutter plugin project."
+description: "A cross-platform Flutter plugin for fast, on-device AI/ML inference using Core ML (iOS) and TensorFlow Lite (Android)."
 version: 0.0.1
-homepage:
-
+homepage: "https://github.com/albertstany-tech/onDevice_AI_Assistant_SDK"
 environment:
   sdk: ^3.11.5
   flutter: '>=3.3.0'

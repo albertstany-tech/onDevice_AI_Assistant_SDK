@@ -23,10 +23,11 @@ class MethodChannelOnDeviceAi extends OnDeviceAiPlatform {
 
   @override
   Future<AIResult> runText(String prompt) async {
-    final result = await methodChannel.invokeMapMethod<String, dynamic>('runText', {
-      'prompt': prompt,
-    });
-    
+    final result = await methodChannel.invokeMapMethod<String, dynamic>(
+      'runText',
+      {'prompt': prompt},
+    );
+
     return AIResult(
       output: result?['output'] as String? ?? '',
       confidenceScore: (result?['confidenceScore'] as num?)?.toDouble() ?? 0.0,
@@ -36,10 +37,11 @@ class MethodChannelOnDeviceAi extends OnDeviceAiPlatform {
 
   @override
   Future<AIResult> runImage(Uint8List imageBytes) async {
-    final result = await methodChannel.invokeMapMethod<String, dynamic>('runImage', {
-      'imageBytes': imageBytes,
-    });
-    
+    final result = await methodChannel.invokeMapMethod<String, dynamic>(
+      'runImage',
+      {'imageBytes': imageBytes},
+    );
+
     return AIResult(
       output: result?['output'] as String? ?? '',
       confidenceScore: (result?['confidenceScore'] as num?)?.toDouble() ?? 0.0,
@@ -50,7 +52,9 @@ class MethodChannelOnDeviceAi extends OnDeviceAiPlatform {
   @override
   Stream<String> streamText(String prompt) {
     methodChannel.invokeMethod<void>('startStreamText', {'prompt': prompt});
-    return eventChannel.receiveBroadcastStream().map((dynamic event) => event.toString());
+    return eventChannel.receiveBroadcastStream().map(
+      (dynamic event) => event.toString(),
+    );
   }
 
   @override

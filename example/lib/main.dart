@@ -15,7 +15,9 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final _onDeviceAiPlugin = OnDeviceAi();
-  final _textController = TextEditingController(text: 'This SDK is absolutely amazing!');
+  final _textController = TextEditingController(
+    text: 'This SDK is absolutely amazing!',
+  );
   String _outputText = 'Waiting for input...';
   bool _isLoading = false;
 
@@ -29,7 +31,9 @@ class _MyAppState extends State<MyApp> {
     setState(() => _isLoading = true);
     try {
       // iOS uses built in NLP for this demo, Android uses the downloaded TFLite file
-      final modelName = Platform.isIOS ? 'built_in_sentiment' : 'sentiment_analysis.tflite';
+      final modelName = Platform.isIOS
+          ? 'built_in_sentiment'
+          : 'sentiment_analysis.tflite';
       await _onDeviceAiPlugin.loadModel(modelName, config: ModelConfig());
       setState(() => _outputText = 'Model ($modelName) loaded successfully.');
     } catch (e) {
@@ -41,16 +45,17 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _runTextInference() async {
     if (_textController.text.isEmpty) return;
-    
+
     setState(() {
       _isLoading = true;
       _outputText = 'Running inference...';
     });
-    
+
     try {
       final result = await _onDeviceAiPlugin.runText(_textController.text);
       setState(() {
-        _outputText = 'Sentiment: ${result.output}\n'
+        _outputText =
+            'Sentiment: ${result.output}\n'
             'Confidence: ${(result.confidenceScore * 100).toStringAsFixed(1)}%\n'
             'Time: ${result.inferenceTimeMs}ms';
       });
@@ -71,10 +76,12 @@ class _MyAppState extends State<MyApp> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('Status: ${_isLoading ? "Processing..." : "Idle"}', 
-                   style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(
+                'Status: ${_isLoading ? "Processing..." : "Idle"}',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 16),
-              
+
               TextField(
                 controller: _textController,
                 decoration: const InputDecoration(
@@ -84,12 +91,12 @@ class _MyAppState extends State<MyApp> {
                 maxLines: 3,
               ),
               const SizedBox(height: 16),
-              
+
               ElevatedButton(
                 onPressed: _isLoading ? null : _runTextInference,
                 child: const Text('Analyze Sentiment'),
               ),
-              
+
               const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.all(16),
@@ -98,10 +105,7 @@ class _MyAppState extends State<MyApp> {
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.blueGrey[200]!),
                 ),
-                child: Text(
-                  _outputText,
-                  style: const TextStyle(fontSize: 16),
-                ),
+                child: Text(_outputText, style: const TextStyle(fontSize: 16)),
               ),
             ],
           ),
@@ -109,7 +113,7 @@ class _MyAppState extends State<MyApp> {
       ),
     );
   }
-  
+
   @override
   void dispose() {
     _textController.dispose();

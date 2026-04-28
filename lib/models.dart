@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 class AIResult {
   final String output;
   final double confidenceScore;
