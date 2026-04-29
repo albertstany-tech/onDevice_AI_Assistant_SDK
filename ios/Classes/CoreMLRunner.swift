@@ -34,15 +34,20 @@ class CoreMLRunner {
         let tagger = NLTagger(tagSchemes: [.sentimentScore])
         tagger.string = prompt
         
-        // Force the language to English to prevent NLTagger from failing on short sentences
         let range = prompt.startIndex..<prompt.endIndex
         tagger.setLanguage(.english, range: range)
         
         var sentimentValue: Double = 0.0
+        var rawScores = [String]()
         
         tagger.enumerateTags(in: range, unit: .paragraph, scheme: .sentimentScore) { tag, tokenRange in
-            if let tag = tag, let score = Double(tag.rawValue) {
-                sentimentValue = score
+            if let tag = tag {
+                rawScores.append(tag.rawValue)
+                if let score = Double(tag.rawValue) {
+                    sentimentValue = score
+                }
+            } else {
+                rawScores.append("nil")
             }
             return true
         }
@@ -52,11 +57,14 @@ class CoreMLRunner {
         
         let outputString = sentimentValue > 0.2 ? "Positive" : (sentimentValue < -0.2 ? "Negative" : "Neutral")
         
-        // For sentiment, confidence can be represented by the magnitude
+        // Debugging info
+        let available = NLTagger.availableTagSchemes(for: .paragraph, language: .english).map { $0.rawValue }
+        let isAvailable = available.contains(NLTagScheme.sentimentScore.rawValue)
+        
         let confidence = abs(sentimentValue)
 
         return [
-            "output": "\(outputString) [Raw Score: \(sentimentValue)]",
+            "output": "\(outputString) [Raw: \(rawScores.joined(separator: ",")), Avail: \(isAvailable)]",
             "confidenceScore": confidence,
             "inferenceTimeMs": inferenceTimeMs
         ]
