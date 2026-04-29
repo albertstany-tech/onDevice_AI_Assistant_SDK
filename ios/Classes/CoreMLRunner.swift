@@ -34,10 +34,18 @@ class CoreMLRunner {
         let tagger = NLTagger(tagSchemes: [.sentimentScore])
         tagger.string = prompt
         
-        // The sentiment score is between -1.0 (very negative) and 1.0 (very positive).
-        let (tag, _) = tagger.tag(at: prompt.startIndex, unit: .paragraph, scheme: .sentimentScore)
+        // Force the language to English to prevent NLTagger from failing on short sentences
+        let range = prompt.startIndex..<prompt.endIndex
+        tagger.setLanguage(.english, range: range)
         
-        let sentimentValue = Double(tag?.rawValue ?? "0") ?? 0.0
+        var sentimentValue: Double = 0.0
+        
+        tagger.enumerateTags(in: range, unit: .paragraph, scheme: .sentimentScore) { tag, tokenRange in
+            if let tag = tag, let score = Double(tag.rawValue) {
+                sentimentValue = score
+            }
+            return true
+        }
         
         let endTime = CFAbsoluteTimeGetCurrent()
         let inferenceTimeMs = Int((endTime - startTime) * 1000)
