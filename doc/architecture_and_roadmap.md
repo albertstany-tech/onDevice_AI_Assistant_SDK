@@ -40,5 +40,10 @@ The current SDK performs *Classification* (picking categories). The next massive
 ### C. Dart FFI (Foreign Function Interface)
 Currently, we rely on `MethodChannels`. If we want to process 60 frames per second of live video for AI, `MethodChannels` are too slow due to serialization overhead. We can upgrade the bridge to **Dart FFI**, which allows Dart to share raw memory pointers directly with Native C/C++, resulting in zero-copy, ultra-low latency inference.
 
-### D. Dynamic Model Downloads
-Currently, the `.tflite` file is bundled directly in the `pubspec.yaml`, which increases the initial App Store download size. We can build a `ModelDownloadManager` in Dart that fetches large models from a cloud bucket on-demand after the user installs the app, caching them to the local file system.
+### D. Hybrid Android Architecture (AICore + TFLite Fallback)
+With Android 16 now available, Google's **AICore** framework embeds Gemini Nano directly into the Android OS. To build a robust, production-grade SDK, we should implement a **Hybrid Architecture** with Graceful Degradation:
+1. **The Fast Path**: The SDK first checks if the Android device supports AICore. If so, it routes requests directly to the OS (achieving parity with iOS's `NaturalLanguage` and requiring zero bundled models).
+2. **The Fallback**: If the device is older (Android 13-) or a budget phone lacking the necessary NPU hardware, the SDK silently falls back to the `.tflite` model (MobileBERT) we built in Phase 2. This guarantees 100% market coverage.
+
+### E. Dynamic Model Downloads
+For the fallback TFLite models, we can further optimize app size by building a `ModelDownloadManager` in Dart. Instead of bundling `.tflite` or `.mlpackage` files in the app store release, the SDK fetches them from a cloud bucket on-demand and caches them locally.
