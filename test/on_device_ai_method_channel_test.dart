@@ -11,7 +11,14 @@ void main() {
   setUp(() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-          return '42';
+          if (methodCall.method == 'runText') {
+            return {
+              'output': 'Positive',
+              'confidenceScore': 0.9,
+              'inferenceTimeMs': 10
+            };
+          }
+          return null;
         });
   });
 
@@ -20,7 +27,8 @@ void main() {
         .setMockMethodCallHandler(channel, null);
   });
 
-  test('getPlatformVersion', () async {
-    expect(await platform.getPlatformVersion(), '42');
+  test('runText', () async {
+    final result = await platform.runText('test');
+    expect(result.output, 'Positive');
   });
 }

@@ -1,5 +1,6 @@
 import CoreML
 import NaturalLanguage
+import Vision
 import Foundation
 #if canImport(Flutter)
 import Flutter
@@ -13,15 +14,19 @@ enum AIError: Error {
 
 class CoreMLRunner {
     private var useBuiltInNLP = false
+    private var useBuiltInVision = false
 
     func loadModel(name: String, useGPU: Bool) throws {
         if name == "built_in_sentiment" {
             self.useBuiltInNLP = true
             return
+        } else if name == "built_in_vision" {
+            self.useBuiltInVision = true
+            return
         }
         
-        // Original logic for custom models could go here, but for this showcase we skip it
         self.useBuiltInNLP = false
+        self.useBuiltInVision = false
         throw AIError.modelNotFound
     }
 
@@ -30,7 +35,6 @@ class CoreMLRunner {
         
         let startTime = CFAbsoluteTimeGetCurrent()
         
-        // Use Apple's built-in NLP for sentiment analysis
         let tagger = NLTagger(tagSchemes: [.sentimentScore])
         tagger.string = prompt
         
@@ -57,7 +61,6 @@ class CoreMLRunner {
         
         let outputString = sentimentValue > 0.2 ? "Positive" : (sentimentValue < -0.2 ? "Negative" : "Neutral")
         
-        // Debugging info
         let available = NLTagger.availableTagSchemes(for: .paragraph, language: .english).map { $0.rawValue }
         let isAvailable = available.contains(NLTagScheme.sentimentScore.rawValue)
         
@@ -72,11 +75,48 @@ class CoreMLRunner {
     
     #if canImport(Flutter)
     func runImage(imageBytes: FlutterStandardTypedData) throws -> [String: Any] {
-        throw AIError.modelNotLoaded
+        guard useBuiltInVision else { throw AIError.modelNotLoaded }
+        
+        guard #available(iOS 14.0, *) else {
+            throw AIError.processingError("Image classification requires iOS 14.0+")
+        }
+        
+        let startTime = CFAbsoluteTimeGetCurrent()
+        
+        guard let image = UIImage(data: imageBytes.data), let cgImage = image.cgImage else {
+            throw AIError.processingError("Failed to decode image bytes")
+        }
+        
+        var bestCategory = "Unknown"
+        var bestScore: Float = 0.0
+        var rawDetails = ""
+        
+        let request = VNClassifyImageRequest { request, error in
+            if let results = request.results as? [VNClassificationObservation] {
+                if let topResult = results.first {
+                    bestCategory = topResult.identifier
+                    bestScore = topResult.confidence
+                }
+                rawDetails = results.prefix(3).map { "\($0.identifier)=\($0.confidence)" }.joined(separator: ", ")
+            }
+        }
+        
+        let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+        try handler.perform([request])
+        
+        let endTime = CFAbsoluteTimeGetCurrent()
+        let inferenceTimeMs = Int((endTime - startTime) * 1000)
+        
+        return [
+            "output": "\(bestCategory) [Raw: \(rawDetails)]",
+            "confidenceScore": Double(bestScore),
+            "inferenceTimeMs": inferenceTimeMs
+        ]
     }
     #endif
 
     func dispose() {
         self.useBuiltInNLP = false
+        self.useBuiltInVision = false
     }
 }
