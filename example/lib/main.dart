@@ -38,7 +38,7 @@ class _MyAppState extends State<MyApp> {
     if (_activeModelType == 'text') return;
     setState(() => _isLoading = true);
     try {
-      final modelName = Platform.isIOS
+      final modelName = (Platform.isIOS || Platform.isMacOS)
           ? 'built_in_sentiment'
           : 'sentiment_analysis.tflite';
       await _onDeviceAiPlugin.loadModel(modelName, config: ModelConfig());
@@ -55,7 +55,7 @@ class _MyAppState extends State<MyApp> {
     if (_activeModelType == 'image') return;
     setState(() => _isLoading = true);
     try {
-      final modelName = Platform.isIOS
+      final modelName = (Platform.isIOS || Platform.isMacOS)
           ? 'built_in_vision'
           : 'mobilenet_v1_1.0_224_quant.tflite';
       await _onDeviceAiPlugin.loadModel(modelName, config: ModelConfig());
