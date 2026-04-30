@@ -1,3 +1,7 @@
+## 0.2.0
+* Added macOS platform support (macOS 11.0+) utilizing `NSImage` and native Apple frameworks (`AppKit`, `Vision`, `NaturalLanguage`).
+* Updated example app to include a macOS runner with file picking support.
+
 ## 0.1.2
 
 ### iOS Improvements
