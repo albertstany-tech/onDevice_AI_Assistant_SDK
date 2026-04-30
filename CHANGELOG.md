@@ -1,4 +1,14 @@
+## 0.1.1
+
+### Documentation
+* Added full `dartdoc` comments to all public API elements: `AIResult`, `ModelConfig`,
+  `OnDeviceAi`, and `OnDeviceAiPlatform`. This satisfies the pub.dev documentation
+  score requirement (≥20% of public API elements documented).
+
+---
+
 ## 0.1.0
+
 
 ### New Features
 * **Image Classification** (`runImage`): Pass an image byte array and receive an on-device classification result (e.g. "Golden Retriever: 94%") with no internet connection.

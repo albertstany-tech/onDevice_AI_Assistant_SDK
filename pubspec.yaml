@@ -1,6 +1,6 @@
 name: on_device_ai
 description: "A cross-platform Flutter plugin for on-device AI/ML inference. Supports text sentiment analysis and image classification using Apple frameworks (iOS) and TensorFlow Lite (Android)."
-version: 0.1.0
+version: 0.1.1
 homepage: "https://github.com/albertstany-tech/onDevice_AI_Assistant_SDK"
 environment:
   sdk: ^3.11.5
