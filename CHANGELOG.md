@@ -1,3 +1,6 @@
+## 0.2.1
+* Fixed pub.dev platform score warning by relocating `Package.swift` to `ios/on_device_ai/Package.swift` and `macos/on_device_ai/Package.swift` to strictly follow Flutter's Swift Package Manager structure guidelines.
+
 ## 0.2.0
 * Added macOS platform support (macOS 11.0+) utilizing `NSImage` and native Apple frameworks (`AppKit`, `Vision`, `NaturalLanguage`).
 * Updated example app to include a macOS runner with file picking support.

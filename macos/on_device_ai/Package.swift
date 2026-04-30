@@ -9,7 +9,6 @@ let package = Package(
         .macOS("11.0")
     ],
     products: [
-        // The library name must match the module name used by Flutter.
         .library(name: "on_device_ai", targets: ["on_device_ai"]),
     ],
     dependencies: [],
@@ -17,10 +16,7 @@ let package = Package(
         .target(
             name: "on_device_ai",
             dependencies: [],
-            // Points to the same Classes/ directory as the .podspec does.
-            path: "Classes",
-            // The NaturalLanguage and Vision frameworks are system frameworks
-            // already included in the macOS SDK — no external dependencies needed.
+            path: "../Classes",
             linkerSettings: [
                 .linkedFramework("NaturalLanguage"),
                 .linkedFramework("Vision"),
