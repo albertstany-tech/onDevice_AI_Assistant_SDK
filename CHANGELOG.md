@@ -1,4 +1,17 @@
+## 0.1.2
+
+### iOS Improvements
+* Added **Swift Package Manager (SPM)** support via `ios/Package.swift`. The plugin
+  now works in Xcode projects that use SPM instead of CocoaPods, resolving the
+  pub.dev platform score warning.
+* Updated `on_device_ai.podspec` with correct version number (`0.1.2`), accurate
+  description, and explicit declarations for the `NaturalLanguage`, `Vision`, and
+  `CoreML` system frameworks.
+
+---
+
 ## 0.1.1
+
 
 ### Documentation
 * Added full `dartdoc` comments to all public API elements: `AIResult`, `ModelConfig`,
